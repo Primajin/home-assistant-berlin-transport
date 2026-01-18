@@ -1,7 +1,6 @@
 # mypy: disable-error-code="attr-defined"
 
 """The Berlin (BVG) and Brandenburg (VBB) transport integration."""
-
 from __future__ import annotations
 import logging
 from datetime import datetime, timedelta
@@ -109,7 +108,9 @@ class TransportSensor(SensorEntity):
         self._attr_latitude = None
         self._attr_longitude = None
         self.session: CachedSession = CachedSession(
-            backend="memory", cache_control=True, expire_after=timedelta(days=1)
+            backend='memory',
+            cache_control=True,
+            expire_after=timedelta(days=1)
         )
 
     @property
@@ -220,7 +221,7 @@ class TransportSensor(SensorEntity):
         if self.direction is None:
             departures += self.fetch_directional_departure(self.direction)
         else:
-            for direction in self.direction.split(","):
+            for direction in self.direction.split(','):
                 departures += self.fetch_directional_departure(direction)
 
         # Get rid of duplicates
