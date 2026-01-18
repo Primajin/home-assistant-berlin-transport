@@ -184,7 +184,11 @@ class TransportSensor(SensorEntity):
             _LOGGER.error(f"API invalid JSON: {ex}")
             return []
 
-        if self._attr_latitude is None and departures.get("departures"):
+        if (
+            self._attr_latitude is None
+            and self._attr_longitude is None
+            and departures.get("departures")
+        ):
             try:
                 stop = departures["departures"][0].get("stop", {}).get("location", {})
                 latitude = stop.get("latitude")
