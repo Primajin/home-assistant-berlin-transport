@@ -189,7 +189,8 @@ class TransportSensor(SensorEntity):
             and self._attr_longitude is None
             and len(departures.get("departures", [])) > 0
         ):
-            stop = departures["departures"][0].get("stop", {}).get("location", {})
+            departures_list = departures.get("departures", [])
+            stop = departures_list[0].get("stop", {}).get("location", {})
             latitude = stop.get("latitude")
             longitude = stop.get("longitude")
             if latitude is not None and longitude is not None:
