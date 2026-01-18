@@ -1,6 +1,7 @@
 # mypy: disable-error-code="attr-defined"
 
 """The Berlin (BVG) and Brandenburg (VBB) transport integration."""
+
 from __future__ import annotations
 import logging
 from datetime import datetime, timedelta
@@ -105,10 +106,10 @@ class TransportSensor(SensorEntity):
         self.walking_time: int = config.get(CONF_DEPARTURES_WALKING_TIME) or 1
         # we add +1 minute anyway to delete the "just gone" transport
         self.show_api_line_colors: bool = config.get(CONF_SHOW_API_LINE_COLORS) or False
+        self._attr_latitude = None
+        self._attr_longitude = None
         self.session: CachedSession = CachedSession(
-            backend='memory',
-            cache_control=True,
-            expire_after=timedelta(days=1)
+            backend="memory", cache_control=True, expire_after=timedelta(days=1)
         )
 
     @property
@@ -183,6 +184,14 @@ class TransportSensor(SensorEntity):
             _LOGGER.error(f"API invalid JSON: {ex}")
             return []
 
+        if self._attr_latitude is None and departures.get("departures"):
+            try:
+                stop = departures["departures"][0].get("stop", {}).get("location", {})
+                self._attr_latitude = stop.get("latitude")
+                self._attr_longitude = stop.get("longitude")
+            except (IndexError, AttributeError):
+                pass
+
         if self.excluded_stops is None:
             excluded_stops = []
         else:
@@ -201,7 +210,7 @@ class TransportSensor(SensorEntity):
         if self.direction is None:
             departures += self.fetch_directional_departure(self.direction)
         else:
-            for direction in self.direction.split(','):
+            for direction in self.direction.split(","):
                 departures += self.fetch_directional_departure(direction)
 
         # Get rid of duplicates
