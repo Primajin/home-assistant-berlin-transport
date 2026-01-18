@@ -205,7 +205,7 @@ class TransportSensor(SensorEntity):
         # convert api data into objects
         return [
             Departure.from_dict(departure)
-            for departure in departures.get("departures")
+            for departure in departures_list
             if departure["stop"]["id"] not in excluded_stops
         ]
 
