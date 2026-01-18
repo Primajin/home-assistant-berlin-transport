@@ -193,7 +193,12 @@ class TransportSensor(SensorEntity):
             stop = departures_list[0].get("stop", {}).get("location", {})
             latitude = stop.get("latitude")
             longitude = stop.get("longitude")
-            if latitude is not None and longitude is not None:
+            if (
+                latitude is not None
+                and longitude is not None
+                and isinstance(latitude, (int, float))
+                and isinstance(longitude, (int, float))
+            ):
                 self._attr_latitude = latitude
                 self._attr_longitude = longitude
 
