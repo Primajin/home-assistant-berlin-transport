@@ -187,8 +187,11 @@ class TransportSensor(SensorEntity):
         if self._attr_latitude is None and departures.get("departures"):
             try:
                 stop = departures["departures"][0].get("stop", {}).get("location", {})
-                self._attr_latitude = stop.get("latitude")
-                self._attr_longitude = stop.get("longitude")
+                latitude = stop.get("latitude")
+                longitude = stop.get("longitude")
+                if latitude is not None and longitude is not None:
+                    self._attr_latitude = latitude
+                    self._attr_longitude = longitude
             except (IndexError, AttributeError):
                 pass
 
